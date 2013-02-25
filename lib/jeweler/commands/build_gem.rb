@@ -12,8 +12,13 @@ class Jeweler
 
         gemspec = gemspec_helper.parse
 
-        require 'rubygems/ext/builder'
-        gem_file_name = Gem::Builder.new(gemspec).build
+        if RUBY_VERSION >= "2.0.0"
+          require 'rubygems/ext/builder'
+          gem_file_name = Gem::Ext::Builder.new(gemspec).build
+        else
+          require 'rubygems/builder'
+          gem_file_name = Gem::Builder.new(gemspec).build
+        end
 
         pkg_dir = File.join(base_dir, 'pkg')
         file_utils.mkdir_p pkg_dir
