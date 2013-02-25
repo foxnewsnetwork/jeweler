@@ -23,8 +23,12 @@ class Jeweler
         end
 
         should "build from parsed gemspec" do
-          assert_received(RUBY_VERSION < "2.0.0" ? Gem::Builder : Gem::Package) {|builder_class| builder_class.new(@gemspec) }
-          assert_received(@builder) {|builder| builder.build }
+          if RUBY_VERSION < "2.0.0"
+            assert_received( Gem::Builder ) {|builder_class| builder_class.new(@gemspec) }
+            assert_received(@builder) {|builder| builder.build }
+          else
+            assert_received( Gem::Package ) { |package_class| package_class.build(@gemspec) }
+          end
         end
 
         should 'make package directory' do
@@ -81,13 +85,13 @@ class Jeweler
 
         @version_helper = "Jeweler::VersionHelper"
 
-        @builder = Object.new
         if RUBY_VERSION < "2.0.0"
+          @builder = Object.new
           stub(Gem::Builder).new { @builder }
+          stub(@builder).build { 'zomg-1.2.3.gem' }
         else
-          stub(Gem::Package).new { @builder }
+          stub(Gem::Package).build { 'zomg-1.2.3.gem' }
         end
-        stub(@builder).build { 'zomg-1.2.3.gem' }
 
         @file_utils = Object.new
         stub(@file_utils).mkdir_p './pkg'
