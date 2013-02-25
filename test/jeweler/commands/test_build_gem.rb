@@ -1,4 +1,4 @@
-require 'test_helper'
+  require 'test_helper'
 
 class Jeweler
   module Commands
@@ -23,7 +23,7 @@ class Jeweler
         end
 
         should "build from parsed gemspec" do
-          assert_received(Gem::Builder) {|builder_class| builder_class.new(@gemspec) }
+          assert_received(RUBY_VERSION < "2.0.0" ? Gem::Builder : Gem::Package) {|builder_class| builder_class.new(@gemspec) }
           assert_received(@builder) {|builder| builder.build }
         end
 
@@ -82,7 +82,11 @@ class Jeweler
         @version_helper = "Jeweler::VersionHelper"
 
         @builder = Object.new
-        stub(Gem::Builder).new { @builder }
+        if RUBY_VERSION < "2.0.0"
+          stub(Gem::Builder).new { @builder }
+        else
+          stub(Gem::Package).new { @builder }
+        end
         stub(@builder).build { 'zomg-1.2.3.gem' }
 
         @file_utils = Object.new
