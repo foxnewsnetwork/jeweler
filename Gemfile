@@ -16,11 +16,7 @@ group :development do
   gem "rdoc"
   gem "bluecloth"
   gem "cucumber", "~> 1.1.4"
-  if RUBY_VERSION <= "1.9.0"
-    gem "rcov"
-  else
-    gem "simplecov"
-  end
+  gem "rcov"
 end
 
 group :test do
