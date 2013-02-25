@@ -55,10 +55,12 @@ YARD::Rake::YardocTask.new do |t|
   t.files   = FileList['lib/**/*.rb'].exclude('lib/jeweler/templates/**/*.rb')
 end
 
-require 'rcov/rcovtask'
-Rcov::RcovTask.new(:rcov => :check_dependencies) do |rcov|
-  rcov.libs << 'test'
-  rcov.pattern = 'test/**/test_*.rb'
+if RUBY_VERSION <= "1.9.0"
+  require 'rcov/rcovtask' 
+  Rcov::RcovTask.new(:rcov => :check_dependencies) do |rcov|
+    rcov.libs << 'test'
+    rcov.pattern = 'test/**/test_*.rb'
+  end
 end
 
 require 'cucumber/rake/task'
